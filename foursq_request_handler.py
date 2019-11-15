@@ -53,3 +53,56 @@ def get_foursq_from_swarmapp(url):
     for i in mydivs:
         if 'foursquare.com/v/' in i.attrs['href']:
             return i.attrs['href']
+
+
+def get_url_from_4sq(url):
+    res = make_request(url)
+    while res.status_code != 200:
+        # print(res.status_code + ' ---> ' + url)
+        if res.status_code == 404 or res.status_code == 405:
+            return
+        else:
+            res = make_request(url)
+
+    return res.url
+
+
+def check_if_restaurant(res):
+    src = res.content
+    soup = BeautifulSoup(src, 'lxml')
+
+    mydivs = soup.find("div", {"class": "categories"})
+    if mydivs != None:
+        price = mydivs.find("span", {"class": "price"})
+        if price != None:
+            return True
+
+    return False
+
+
+def get_restaurant_data(res):
+    title = ''
+    category = ''
+    rating_value = ''
+    src = res.content
+    soup = BeautifulSoup(src, 'lxml')
+
+    mydivs = soup.find("div", {"class": "categories"})
+    if mydivs != None:
+        price = mydivs.find("span", {"class": "price"})
+        if price != None:
+            print(price.attrs['title'])
+            category = price.attrs['title']
+            ratedivs = soup.find("div", {"class": "venueRateBlock"})
+            if ratedivs != None:
+                x = ratedivs.find("span", {"class": "venueScore"})
+                if x != None:
+                    rating = x.find("span", {"itemprop": "ratingValue"})
+                    print(rating.text)
+                    rating_value = rating.text
+            t = soup.find("h1", {"class": "venueName"})
+            if t != None:
+                title = t.text
+
+    return [title, category, rating_value]
+
