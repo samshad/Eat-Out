@@ -1,8 +1,25 @@
 import pandas as pd
 
 
-df = pd.read_csv('Saved Datas//All_Restaurant_Data.csv')
+a = False
 
-x = df[df.url == 'https://foursquare.com/v/pollo-tropical/4becafbbbbe62d7f45457f2b']
+if not a:
+    print('paisi')
 
-print(len(x.url))
+
+'''df1 = pd.read_csv('Saved Datas//All_Restaurant_Data.csv')
+
+title_dict = {}
+arr = []
+
+for index, row in df2.iterrows():
+    title_dict[row['urls']] = row['titles']
+
+for index, row in df1.iterrows():
+    arr.append([title_dict[row['urls'].strip()], row['category'], row['rating'], row['urls'].strip()])
+
+print(len(arr))
+
+df = pd.DataFrame(arr, columns=['title', 'category', 'rating', 'url'])
+df.to_csv('Saved Datas/All_Restaurant_Data.csv', index=False)
+print('Done...')'''

@@ -40,7 +40,7 @@ make_proxy_list()
 def get_foursq_from_swarmapp(url):
     res = make_request(url)
     while res.status_code != 200:
-        #print(res.status_code + ' ---> ' + url)
+        print(res.status_code + ' [swarm]---> ' + url)
         if res.status_code == 404 or res.status_code == 405:
             return
         else:
@@ -58,7 +58,7 @@ def get_foursq_from_swarmapp(url):
 def get_url_from_4sq(url):
     res = make_request(url)
     while res.status_code != 200:
-        # print(res.status_code + ' ---> ' + url)
+        print(res.status_code + ' [4sq]---> ' + url)
         if res.status_code == 404 or res.status_code == 405:
             return
         else:
