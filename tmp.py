@@ -1,11 +1,13 @@
 import pandas as pd
 
 
-a = False
+df = pd.read_csv('Saved Datas/swarm_foursq.csv')
 
-if not a:
-    print('paisi')
+print(len(df.swarm))
 
+df = df.drop_duplicates('foursq')
+
+print(len(df.swarm))
 
 '''df1 = pd.read_csv('Saved Datas//All_Restaurant_Data.csv')
 

@@ -6,8 +6,6 @@ import concurrent.futures
 
 start = time.time()
 
-username = 'ThisIsTee1'
-df = pd.read_csv('Sample Datas/Initial URLs/' + username + '.csv')
 check_saved_4sq = pd.read_csv('Saved Datas/4sq_foursq.csv')
 check_saved_swarm = pd.read_csv('Saved Datas/swarm_foursq.csv')
 check_saved_not_restaurant_list = pd.read_csv('Saved Datas/Not_Restaurants.csv')
@@ -66,19 +64,16 @@ def from_4sq(url):
 
 def go(i):
     global req
-    global urls_4sq
-    global urls_swarm
     global urls_not_rest
     global urls_rest_data
     global data_arr
-    global check_saved_4sq
-    global check_saved_swarm
     global check_saved_not_restaurant_list
     global check_saved_restaurant_list
 
     tweet_id = i[0]
     url = i[1]
     datetime = i[2]
+    print(url)
 
     if '4sq.com' in url:
         url = from_4sq(url)
@@ -95,7 +90,7 @@ def go(i):
         c = urls_rest_data[url][2]
         d = url
         print('saved dict: ')
-        print([tweet_id, datetime, a, b, c, d])
+        #print([tweet_id, datetime, a, b, c, d])
         data_arr.append([tweet_id, datetime, a, b, c, d])
         return
 
@@ -111,7 +106,8 @@ def go(i):
         c = list(x.category)[0]
         d = list(x.rating)[0]
         e = list(x.url)[0]
-        print([a, datetime, b, c, d, e])
+        print('saved file: ')
+        #print([a, datetime, b, c, d, e])
         data_arr.append([a, datetime, b, c, d, e])
         return
 
@@ -146,7 +142,7 @@ def write_files():
     dataframe = pd.DataFrame(data_arr, columns=['tweet_id', 'date', 'title', 'category', 'rating', 'urls'])
     dataframe['date'] = pd.to_datetime(df['date'])
     dataframe.sort_values(by=['date'], inplace=True, ascending=False)
-    dataframe.to_csv('Sample Datas/Foursq_Data/' + username + '.csv', index=None, header=True)
+    dataframe.to_csv('Data/Foursq_Data/' + username + '.csv', index=None, header=True)
 
     not_res = pd.DataFrame(urls_not_rest, columns=['urls'])
 
@@ -177,14 +173,53 @@ def write_files():
     urls_swarm.clear()
 
 
-for index, row in df.iterrows():
-    urls_arr.append([row['id'], row['url'], row['date']])
+def global_init():
+    global check_saved_4sq
+    global check_saved_swarm
+    global check_saved_not_restaurant_list
+    global check_saved_restaurant_list
+    check_saved_4sq = pd.read_csv('Saved Datas/4sq_foursq.csv')
+    check_saved_swarm = pd.read_csv('Saved Datas/swarm_foursq.csv')
+    check_saved_not_restaurant_list = pd.read_csv('Saved Datas/Not_Restaurants.csv')
+    check_saved_restaurant_list = pd.read_csv('Saved Datas/All_Restaurant_Data.csv')
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
-    executor.map(go, urls_arr)
+    global urls_4sq
+    global urls_swarm
+    global urls_not_rest
+    global urls_rest_data
+    urls_not_rest = []
+    urls_4sq.clear()
+    urls_rest_data.clear()
+    urls_swarm.clear()
 
-time.sleep(5)
-write_files()
+    global data_arr
+    global urls_arr
+    data_arr = []
+    urls_arr = []
+
+
+cnt = 0
+un = pd.read_csv('Data/userlist.csv')
+users = list(un.users)
+users.sort()
+
+for user in users[1:3]:
+    global_init()
+    cnt += 1
+    print('Count: ' + str(cnt) +
+          '===================================================================================='
+          + '\n====================================================================================')
+    username = user
+    df = pd.read_csv('Data/Initial URLs/' + username + '.csv')
+
+    for index, row in df.iterrows():
+        urls_arr.append([row['id'], row['url'], row['date']])
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        executor.map(go, urls_arr)
+
+    time.sleep(5)
+    write_files()
 
 print('Total: ' + str(len(urls_arr)) + '\n' + 'Request: ' + str(req))
 print('Not Request: ' + str(len(urls_arr) - req))
