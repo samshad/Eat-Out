@@ -19,8 +19,6 @@ urls_rest_data = {}
 data_arr = []
 urls_arr = []
 
-req = 0
-
 fr.make_proxy_list()
 
 
@@ -35,10 +33,10 @@ def from_swarmapp(url):
     if len(x) > 0:
         return list(x['foursq'])[0]
 
-    req += 1
     new_url = fr.get_foursq_from_swarmapp(url)
-
+    print('aisi')
     urls_swarm[url] = new_url
+
     return new_url
 
 
@@ -53,7 +51,6 @@ def from_4sq(url):
     if len(x) > 0:
         return list(x['foursq'])[0]
 
-    req += 1
     new_url = fr.get_url_from_4sq(url)
     if 'swarmapp' in new_url:
         new_url = from_swarmapp(new_url)
@@ -69,6 +66,7 @@ def go(i):
     global data_arr
     global check_saved_not_restaurant_list
     global check_saved_restaurant_list
+    print(fr.req)
 
     tweet_id = i[0]
     url = i[1]
@@ -111,7 +109,6 @@ def go(i):
         data_arr.append([a, datetime, b, c, d, e])
         return
 
-    req += 1
     res = fr.make_request(url)
     while res.status_code != 200:
         print(res.status_code + ' [main]---> ' + url)
@@ -139,8 +136,9 @@ def go(i):
 
 
 def write_files():
+    print('Write kortasi...')
     dataframe = pd.DataFrame(data_arr, columns=['tweet_id', 'date', 'title', 'category', 'rating', 'urls'])
-    dataframe['date'] = pd.to_datetime(df['date'])
+    dataframe['date'] = pd.to_datetime(dataframe['date'])
     dataframe.sort_values(by=['date'], inplace=True, ascending=False)
     dataframe.to_csv('Data/Foursq_Data/' + username + '.csv', index=None, header=True)
 
@@ -174,6 +172,7 @@ def write_files():
 
 
 def global_init():
+    print('INIT() kortasi...')
     global check_saved_4sq
     global check_saved_swarm
     global check_saved_not_restaurant_list
@@ -202,9 +201,11 @@ cnt = 0
 un = pd.read_csv('Data/userlist.csv')
 users = list(un.users)
 users.sort()
+url_cnt = 0
 
-for user in users[1:3]:
+for user in users[195:]:
     global_init()
+    print(user)
     cnt += 1
     print('Count: ' + str(cnt) +
           '===================================================================================='
@@ -215,15 +216,16 @@ for user in users[1:3]:
     for index, row in df.iterrows():
         urls_arr.append([row['id'], row['url'], row['date']])
 
+    url_cnt += len(urls_arr)
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
         executor.map(go, urls_arr)
 
     time.sleep(5)
     write_files()
 
-print('Total: ' + str(len(urls_arr)) + '\n' + 'Request: ' + str(req))
-print('Not Request: ' + str(len(urls_arr) - req))
 
+print("Request: " + str(fr.req))
+print("Total Urls: " + str(url_cnt))
 hours, rem = divmod(time.time() - start, 3600)
 minutes, seconds = divmod(rem, 60)
 print("Time Taken: {:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))

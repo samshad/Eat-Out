@@ -6,6 +6,7 @@ import lxml
 
 
 proxies = []
+req = 0
 
 
 def get_agent():
@@ -22,10 +23,12 @@ def make_proxy_list():
 
 
 def make_request(url):
+    global req
     while 1:
         proxy_string = choice(proxies)
         proxy_dict = {"http": proxy_string, "https": proxy_string}
         try:
+            req += 1
             response = requests.get(url, headers=get_agent(), proxies=proxy_dict)
             break
         except:
@@ -39,6 +42,7 @@ make_proxy_list()
 
 def get_foursq_from_swarmapp(url):
     res = make_request(url)
+    print(res.status_code)
     while res.status_code != 200:
         print(res.status_code + ' [swarm]---> ' + url)
         if res.status_code == 404 or res.status_code == 405:
@@ -48,11 +52,18 @@ def get_foursq_from_swarmapp(url):
 
     src = res.content
     soup = BeautifulSoup(src, 'lxml')
+    new_url = ''
 
     mydivs = soup.findAll('a')
     for i in mydivs:
         if 'foursquare.com/v/' in i.attrs['href']:
-            return i.attrs['href']
+            new_url = i.attrs['href']
+
+    print(new_url)
+    if 'foursquare.com/v/' in new_url:
+        return new_url
+    else:
+        return 'https://foursquare.com/v/vecino-del-mar/4dcf2fcaae603b786d43a93e'
 
 
 def get_url_from_4sq(url):
