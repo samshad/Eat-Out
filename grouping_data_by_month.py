@@ -13,7 +13,7 @@ path = 'Data/Foursq_Data/'
 files = os.listdir(path)
 files.sort()
 
-for file in files[3:]:
+for file in files:
     username = file.split('.csv')[0]
     print(username)
     years = []
