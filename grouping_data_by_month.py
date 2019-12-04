@@ -3,6 +3,9 @@ import os
 
 
 def write_file(username, year, data, fname):
+    p = 'Data/Grouped_Datas/' + username + '/' + year + '/'
+    if not os.path.exists(p):
+        os.makedirs(p)
     dataframe = pd.DataFrame(data, columns=['tweet_id', 'date', 'title', 'category', 'rating', 'urls'])
     dataframe['date'] = pd.to_datetime(dataframe['date'])
     dataframe.sort_values(by=['date'], inplace=True, ascending=False)
@@ -26,10 +29,9 @@ for file in files:
 
     years = list(set(years))
 
-    for i in years:
-        p = 'Data/Grouped_Datas/' + username + '/' + i + '/'
-        if not os.path.exists(p):
-            os.makedirs(p)
+    p = 'Data/Grouped_Datas/' + username + '/'
+    if not os.path.exists(p):
+        os.makedirs(p)
 
     for year in years:
         one = []
@@ -46,8 +48,11 @@ for file in files:
             elif m <= 12 and year == y:
                 three.append([row['tweet_id'], row['date'], row['title'], row['category'], row['rating'], row['urls']])
 
-        write_file(username, year, one, 'first')
-        write_file(username, year, two, 'second')
-        write_file(username, year, three, 'third')
+        if len(one) >= 10:
+            write_file(username, year, one, 'Q1')
+        if len(two) >= 10:
+            write_file(username, year, two, 'Q2')
+        if len(three) >= 10:
+            write_file(username, year, three, 'Q3')
 
 print('Done')

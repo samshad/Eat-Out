@@ -1,28 +1,27 @@
-import pandas as pd
 import os
+import pandas as pd
 
 
-df = pd.read_csv('Saved Datas/swarm_foursq.csv')
+path = 'Data/Foursq_Data/'
+files = os.listdir(path)
+dataframe = pd.DataFrame(columns=['user', 'total_url', 'cheap', 'moderate', 'expensive', 'very expensive'])
+files.sort()
 
-print(len(df.swarm))
+for file in files:
+    name = file.split('.')[0]
+    df = pd.read_csv(path + file)
 
-df = df.drop_duplicates('foursq')
+    Total_URLs = len(df.urls)
 
-print(len(df.swarm))
+    Cheap = len(df[df['category'] == 'Cheap'].urls)
+    Moderate = len(df[df['category'] == 'Moderate'].urls)
+    Expensive = len(df[df['category'] == 'Expensive'].urls)
+    Very_Expensive = len(df[df['category'] == 'Very_Expensive'].urls)
 
-'''df1 = pd.read_csv('Saved Datas//All_Restaurant_Data.csv')
+    # print(name, Total_URLs, Cheap, Moderate, Expensive, Very_Expensive, '\n')
+    new_row = {'user': name, 'total_url': Total_URLs, 'cheap': Cheap, 'moderate': Moderate, 'expensive': Expensive,
+              'very expensive': Very_Expensive}
+    dataframe = dataframe.append(new_row, ignore_index=True)
 
-title_dict = {}
-arr = []
-
-for index, row in df2.iterrows():
-    title_dict[row['urls']] = row['titles']
-
-for index, row in df1.iterrows():
-    arr.append([title_dict[row['urls'].strip()], row['category'], row['rating'], row['urls'].strip()])
-
-print(len(arr))
-
-df = pd.DataFrame(arr, columns=['title', 'category', 'rating', 'url'])
-df.to_csv('Saved Datas/All_Restaurant_Data.csv', index=False)
-print('Done...')'''
+dataframe.to_csv('Data/user_cnt.csv', index=False)
+print(dataframe)
