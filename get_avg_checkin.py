@@ -10,20 +10,15 @@ count = 0
 for user in users:
     years = os.listdir(path + user)
     for year in years:
-        q1 = pd.read_csv(path + user + '/' + year + '/' + 'Q1.csv')
-        q2 = pd.read_csv(path + user + '/' + year + '/' + 'Q2.csv')
-        q3 = pd.read_csv(path + user + '/' + year + '/' + 'Q3.csv')
-        count += (len(q1['tweet_id']) + len(q2['tweet_id']) + len(q3['tweet_id']))
-        if len(q1['tweet_id']) > 0:
-            q_count.append(len(q1['tweet_id']))
-        if len(q2['tweet_id']) > 0:
-            q_count.append(len(q2['tweet_id']))
-        if len(q3['tweet_id']) > 0:
-            q_count.append(len(q3['tweet_id']))
+        files = os.listdir(path + user + '/' + year + '/')
+        for file in files:
+            df = pd.read_csv(path + user + '/' + year + '/' + file)
+            count += len(df['tweet_id'])
+            q_count.append(len(df['tweet_id']))
 
 print(count)
 print('Average Check in by USERS: ' + str(count / 200))
 print(len(q_count))
-print('AverageCheck in by USERS')
-
-
+print(q_count)
+df = pd.DataFrame(q_count, columns=['count'])
+print(df.describe())

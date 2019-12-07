@@ -48,11 +48,11 @@ for file in files:
             elif m <= 12 and year == y:
                 three.append([row['tweet_id'], row['date'], row['title'], row['category'], row['rating'], row['urls']])
 
-        if len(one) >= 10:
+        if len(one) >= 20:
             write_file(username, year, one, 'Q1')
-        if len(two) >= 10:
+        if len(two) >= 20:
             write_file(username, year, two, 'Q2')
-        if len(three) >= 10:
+        if len(three) >= 20:
             write_file(username, year, three, 'Q3')
 
 print('Done')
