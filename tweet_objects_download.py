@@ -4,10 +4,10 @@ import os
 import pandas as pd
 
 
-access_key = "1155844358043652096-iJtClkifFAtl1EgdCVexEhD9hAyw9F"
-access_secret = "votFnHMkt3XiBfUbQz6pfWwDnKg5wbQDLeJf8QsIiAGUJ"
-consumer_key = "n6JuZxpbm9fLjfJH8tOFE7Gyy"
-consumer_secret = "odWOvaXxREpMEcPvpuRwr4inSGJB3zhRCQtFHLdVQDij325kX1"
+access_key = ""
+access_secret = ""
+consumer_key = ""
+consumer_secret = ""
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_key, access_secret)
 api = tweepy.API(auth)
@@ -17,7 +17,7 @@ users = list(df.users)
 cnt = 0
 users.sort()
 
-for user in users[164:]:
+for user in users:
     print(user)
     cnt += 1
     print('Count: ', str(cnt))
